@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="upload-section">
+  <div class="upload-card">
+    <div class="card-header">
+      <h2>📤 Upload Submissions</h2>
+      <p>Select a module and upload student submission files for automated grading</p>
+    </div>
+    
+    <form method="post" enctype="multipart/form-data" class="upload-form">
+      
+      <div class="form-group">
+        <label class="form-label">
+          <span class="label-icon">📚</span>
+          Select Module
+        </label>
+        <select name="module" required class="form-select">
+          <option value="" disabled selected>Choose a module...</option>
+          {% for m in modules %}
+          <option value="{{m}}">{{module_names[m]}}</option>
+          {% endfor %}
+        </select>
+        <p class="form-help">Select which module's assignments you want to grade</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <span class="label-icon">📄</span>
+          Solution File (Optional)
+        </label>
+        <div class="file-input-wrapper">
+          <input type="file" name="solution_file" id="solution_file" class="file-input" accept=".py">
+          <label for="solution_file" class="file-input-label">
+            <span class="file-icon">📎</span>
+            <span class="file-text">Choose solution file...</span>
+          </label>
+        </div>
+        <p class="form-help">Upload the reference solution (optional for comparison)</p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label required">
+          <span class="label-icon">🗂️</span>
+          Student Submissions ZIP
+        </label>
+        <div class="file-input-wrapper">
+          <input type="file" name="submissions_zip" id="submissions_zip" class="file-input" accept=".zip" required>
+          <label for="submissions_zip" class="file-input-label">
+            <span class="file-icon">📦</span>
+            <span class="file-text">Choose ZIP file...</span>
+          </label>
+        </div>
+        <p class="form-help">Upload a ZIP file containing all student .py submission files</p>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary btn-large" type="submit">
+          <span>Grade Submissions</span>
+          <span>🚀</span>
+        </button>
+      </div>
+      
+    </form>
+    
+    <div class="info-box">
+      <h4>📋 Instructions</h4>
+      <ul>
+        <li>All student submission files must be Python (.py) files</li>
+        <li>Place all submissions in a single ZIP archive</li>
+        <li>Files will be automatically extracted and graded</li>
+        <li>Results will be available as CSV and Excel downloads</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+// Update file input labels with selected filename
+document.querySelectorAll('.file-input').forEach(input => {
+  input.addEventListener('change', function() {
+    const label = this.nextElementSibling;
+    const textSpan = label.querySelector('.file-text');
+    if (this.files.length > 0) {
+      textSpan.textContent = this.files[0].name;
+      label.classList.add('file-selected');
+    } else {
+      textSpan.textContent = 'Choose file...';
+      label.classList.remove('file-selected');
+    }
+  });
+});
+</script>
+
+{% endblock %}

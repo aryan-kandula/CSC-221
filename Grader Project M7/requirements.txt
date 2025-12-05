@@ -1,0 +1,29 @@
+# M7Pro Grader - Python Dependencies
+# CTI-110 Group Project - Module 7
+
+# Flask - Web framework
+flask>=3.0.0
+
+# Data processing and analysis
+pandas>=2.0.0
+
+# Excel file creation and manipulation
+openpyxl>=3.1.0
+
+# Plotting and visualization
+matplotlib>=3.7.0
+
+# FastAPI for optional dictionary API
+fastapi>=0.100.0
+uvicorn>=0.23.0
+
+# HTTP requests library
+requests>=2.31.0
+
+# Additional useful libraries
+Pillow>=10.0.0  # Image processing (for charts)
+numpy>=1.24.0   # Numerical operations (required by pandas/matplotlib)
+
+# Optional but recommended
+python-dotenv>=1.0.0  # Environment variable management
+Werkzeug>=3.0.0       # WSGI utilities (comes with Flask)

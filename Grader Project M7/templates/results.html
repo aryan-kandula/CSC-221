@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="results-section">
+  <div class="results-header">
+    <h2 class="dashboard-title">📊 Dashboard - {{module_name}}</h2>
+    <div class="header-actions">
+      <a class="btn btn-secondary" href="{{url_for('upload')}}">
+        <span>Grade More</span>
+        <span>+</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Summary Statistics Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">📋</div>
+      <div class="stat-content">
+        <div class="stat-value">{{stats.total_submissions}}</div>
+        <div class="stat-label">Total Submissions</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">📈</div>
+      <div class="stat-content">
+        <div class="stat-value">{{stats.average_grade}}</div>
+        <div class="stat-label">Average Grade</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">🏆</div>
+      <div class="stat-content">
+        <div class="stat-value">{{stats.highest_grade}}</div>
+        <div class="stat-label">Highest Grade</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">📉</div>
+      <div class="stat-content">
+        <div class="stat-value">{{stats.lowest_grade}}</div>
+        <div class="stat-label">Lowest Grade</div>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">✅</div>
+      <div class="stat-content">
+        <div class="stat-value">{{stats.passing_rate}}%</div>
+        <div class="stat-label">Passing Rate (≥70)</div>
+      </div>
+    </div>
+    
+    <div class="stat-card stat-card-warning">
+      <div class="stat-icon">🚫</div>
+      <div class="stat-content">
+        <div class="stat-value">{{stats.grade_1_count}}</div>
+        <div class="stat-label">Failed (Grade = 1)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard with TWO Graphs (as per wireframe) -->
+  <div class="dashboard-section">
+    <h3 class="section-title-white">📈 Dashboard Visualizations</h3>
+    
+    <div class="charts-section">
+      <!-- CHART 1: Bar chart plotting criteria -->
+      <div class="chart-card">
+        <h3 class="chart-title-white">Bar Chart - Plotting Criteria</h3>
+        {% if plot_criteria %}
+        <div class="chart-container">
+          <img src="data:image/png;base64,{{ plot_criteria }}" class="chart-image" alt="Criteria Bar Chart">
+        </div>
+        {% else %}
+        <p class="no-data">No criteria data available</p>
+        {% endif %}
+      </div>
+
+      <!-- CHART 2: Bar chart showing students with grade 1 -->
+      <div class="chart-card">
+        <h3 class="chart-title-white">Bar Chart - Students with Grade "1"</h3>
+        <p class="chart-description">Number and percentage of students who received a failing grade (1)</p>
+        <div class="chart-container">
+          <img src="data:image/png;base64,{{ plot_grade1 }}" class="chart-image" alt="Grade 1 Distribution">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DataFrame - Grades Table (as per wireframe) -->
+  <div class="table-card">
+    <div class="card-header">
+      <h3 class="table-header-title">📋 Grading Results - DataFrame</h3>
+      <p>Results showing a column for each criteria</p>
+    </div>
+    <div class="table-wrapper">
+      <table class="results-table">
+        <thead>
+          <tr>
+            {% for col in df.columns %}
+            <th>{{col}}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in df.to_dict(orient="records") %}
+          <tr>
+            {% for col in df.columns %}
+            {% if col == "total_grade" %}
+              <td class="grade-cell {% if row[col] == 1 %}grade-fail-1{% elif row[col] >= 90 %}grade-a{% elif row[col] >= 80 %}grade-b{% elif row[col] >= 70 %}grade-c{% elif row[col] >= 60 %}grade-d{% else %}grade-f{% endif %}">
+                {{row[col]}}
+              </td>
+            {% else %}
+              <td>{{row[col]}}</td>
+            {% endif %}
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Detailed Feedback Section -->
+  <div class="feedback-section">
+    <h3 class="section-title-white">💬 Detailed Feedback by Student</h3>
+    <div class="feedback-grid">
+      {% for fb in feedback %}
+      <details class="feedback-card {% if fb.total_grade == 1 %}feedback-card-failed{% endif %}">
+        <summary class="feedback-summary">
+          <div class="summary-content">
+            <span class="file-icon">{% if fb.total_grade == 1 %}🚫{% else %}📄{% endif %}</span>
+            <span class="file-name">{{fb.file}}</span>
+            <span class="grade-badge {% if fb.total_grade == 1 %}grade-fail-badge{% elif fb.total_grade >= 70 %}grade-pass{% else %}grade-fail{% endif %}">
+              Grade: {{fb.total_grade}}
+            </span>
+          </div>
+          <span class="expand-icon">▼</span>
+        </summary>
+        
+        <div class="feedback-content">
+          {% if fb.feedback.general %}
+          <div class="general-feedback {% if fb.total_grade == 1 %}general-feedback-critical{% endif %}">
+            <h4>{% if fb.total_grade == 1 %}Critical Issue:{% else %}General Feedback:{% endif %}</h4>
+            <p class="feedback-text">{{fb.feedback.general}}</p>
+          </div>
+          {% endif %}
+          
+          <div class="criteria-feedback">
+            <h4>Criteria Assessment:</h4>
+            <ul class="feedback-list">
+              {% for crit, reason in fb.feedback.items() %}
+                {% if crit != "general" %}
+                <li class="feedback-item">
+                  <strong class="criteria-name">{{crit}}:</strong>
+                  <span class="feedback-text">{{reason}}</span>
+                </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+          
+          {% if fb.snippet %}
+          <div class="code-snippet">
+            <h4>Code Preview (First 400 characters):</h4>
+            <pre class="snippet-code">{{fb.snippet}}</pre>
+          </div>
+          {% endif %}
+        </div>
+      </details>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Download Section (as per wireframe) -->
+  <div class="download-section">
+    <h3 class="section-title-white">📥 Download Results</h3>
+    <p class="download-description">
+      Download results as CSV or Excel file. The Excel file contains results in one sheet and plots in another sheet.
+    </p>
+    <div class="download-buttons">
+      <a class="btn btn-download" href="{{url_for('download', filename=csv_filename)}}">
+        <span class="btn-icon">CSV</span>
+        <span>Download CSV</span>
+      </a>
+      <a class="btn btn-download btn-excel" href="{{url_for('download', filename=excel_filename)}}">
+        <span class="btn-icon">XLSX</span>
+        <span>Download Excel (with Plots)</span>
+      </a>
+    </div>
+    <p class="download-note">
+      Excel file name: <code>{{excel_filename}}</code>
+    </p>
+  </div>
+</div>
+
+{% endblock %}

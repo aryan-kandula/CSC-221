@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>M7Pro Grader ⭐</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<script>
+function shutdownServer() {
+  if (confirm('Are you sure you want to exit the application? This will close the server.')) {
+    fetch('/shutdown', { method: 'POST' })
+      .then(() => {
+        alert('Application is shutting down. You can close this window.');
+        setTimeout(() => window.close(), 2000);
+      })
+      .catch(() => {
+        alert('Application closed. You can close this window now.');
+      });
+  }
+}
+</script>
+
+<header>
+  <div class="header-content">
+    <div class="logo">
+      <h1>🧠 M7Pro Grader</h1>
+      <p class="tagline">CTI-110 Automated Assessment System</p>
+    </div>
+    <nav>
+      <a href="{{ url_for('index') }}" class="nav-link">
+        <span class="nav-icon">🏠</span>
+        <span>Home</span>
+      </a>
+      <a href="{{ url_for('upload') }}" class="nav-link">
+        <span class="nav-icon">📤</span>
+        <span>Upload & Grade</span>
+      </a>
+      <button onclick="shutdownServer()" class="nav-link nav-button-exit">
+        <span class="nav-icon">🚪</span>
+        <span>Exit App</span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="flash-container">
+        {% for msg in messages %}
+          <div class="flash">{{ msg }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  
+  {% block content %}{% endblock %}
+</main>
+
+<footer>
+  <div class="footer-content">
+    <p>M7Pro Grader © 2025</p>
+    <p class="footer-sub">Built with ❤️ using Flask & Python</p>
+  </div>
+</footer>
+
+</body>
+</html>

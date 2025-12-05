@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="hero-section">
+  <div class="hero-content">
+    <h2 class="hero-title">Welcome to M7Pro Grader 👋</h2>
+    <p class="hero-description">
+      A modern, automated grading tool for CTI-110 Modules. 
+      Upload student submissions and get instant, detailed feedback with comprehensive analytics.
+    </p>
+    
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Fast Batch Grading</h3>
+        <p>Grade multiple submissions simultaneously with our efficient batch processing</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Visual Analytics</h3>
+        <p>Get instant charts and statistics to understand class performance at a glance</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">💬</div>
+        <h3>Detailed Feedback</h3>
+        <p>Receive specific, actionable feedback for each grading criterion</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">📥</div>
+        <h3>Export Options</h3>
+        <p>Download results as CSV or Excel with embedded charts for easy sharing</p>
+      </div>
+    </div>
+    
+    <div class="modules-section">
+      <h3>Supported Modules</h3>
+      <div class="modules-list">
+        <div class="module-badge">M1 - Input Output</div>
+        <div class="module-badge">M2 - Collections</div>
+        <div class="module-badge">M3 - Decision Structures</div>
+        <div class="module-badge">M4 - Loops</div>
+        <div class="module-badge">M5 - Functions</div>
+      </div>
+    </div>
+    
+    <a class="btn btn-primary btn-large" href="{{ url_for('upload') }}">
+      Start Grading 🚀
+    </a>
+  </div>
+</div>
+
+{% endblock %}
